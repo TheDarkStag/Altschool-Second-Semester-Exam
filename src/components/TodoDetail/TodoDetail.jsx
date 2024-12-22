@@ -1,7 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTodos } from '../../hooks/useTodos';
+import './TodoDetail.css';
+
 
 function TodoDetail() {
   const { id } = useParams();

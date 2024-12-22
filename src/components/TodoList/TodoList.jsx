@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTodos } from '../../hooks/useTodos';
 import { useFilter } from '../../hooks/useFilter';
 import TodoListControls from './TodoListControls';
@@ -10,34 +10,19 @@ import BackToTop from './BackToTop';
 import './TodoList.css';
 
 const TodoList = () => {
-  const {
-    todos,
-    addTodo,
-    currentPage,
-    isLoading,
-    error,
-    setCurrentPage,
-    deleteTodo,
-    updateTodoItem
-  } = useTodos();
+  const { todos, addTodo, isLoading, error, deleteTodo, updateTodoItem } = useTodos();
+  const { filter, search, setFilter, setSearch, filteredItems: filteredTodos } = useFilter(todos);
 
-  const {
-    filter,
-    search,
-    setFilter,
-    setSearch,
-    filteredItems: filteredTodos
-  } = useFilter(todos);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Number of items per page
+
+  const totalPages = Math.ceil(filteredTodos.length / pageSize);
+  const paginatedTodos = filteredTodos.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   useEffect(() => {
-    const handleTodoUpdate = (event) => {
-      const updatedTodo = event.detail;
-      updateTodoItem(updatedTodo.id, updatedTodo);
-    };
-
-    window.addEventListener('todoUpdated', handleTodoUpdate);
-    return () => window.removeEventListener('todoUpdated', handleTodoUpdate);
-  }, [updateTodoItem]);
+    // Reset to the first page if the filter changes
+    setCurrentPage(1);
+  }, [filter, search]);
 
   if (isLoading) return <div className="loading" role="status">Loading...</div>;
   if (error) return <div className="error" role="alert">Error: {error}</div>;
@@ -58,24 +43,20 @@ const TodoList = () => {
       <h1 className="todo-list-heading">TODO LIST</h1>
 
       <div className="todos" role="list">
-        {
-          filteredTodos.map((todo, i) => (
-            <TodoItem
-              key={i}
-              todo={todo}
-              onDelete={deleteTodo}
-            />
-          ))
-        }
+        {paginatedTodos.map((todo, i) => (
+          <TodoItem key={i} todo={todo} onDelete={deleteTodo} />
+        ))}
       </div>
 
       <Pagination
         currentPage={currentPage}
+        totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
 
       <BackToTop />
     </div>
   );
-}
+};
+
 export default TodoList;

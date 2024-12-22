@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles/Pagination.css';
 
-function Pagination({ currentPage, onPageChange }) {
+function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <div className="pagination">
       <button
@@ -10,9 +10,12 @@ function Pagination({ currentPage, onPageChange }) {
       >
         Previous
       </button>
-      <span>Page {currentPage}</span>
+      <span>
+        Page {currentPage} of {totalPages}
+      </span>
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+        disabled={currentPage === totalPages}
       >
         Next
       </button>

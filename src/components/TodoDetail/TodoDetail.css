@@ -56,6 +56,11 @@
   white-space: nowrap;
 }
 
+.todo-info button,
+.todo-info .back-to-list {
+  margin-right: 0.5rem; /* Adds space between buttons */
+}
+
 .todo-info button:hover,
 .edit-form button:hover {
   background-color: #2980b9;
@@ -85,3 +90,4 @@
     margin: 0.25rem 0;
   }
 }
+
